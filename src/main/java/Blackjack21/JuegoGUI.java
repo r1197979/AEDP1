@@ -213,10 +213,9 @@ public class JuegoGUI extends Application{
 
     }
 
-
-
+/*
     public void mostrarGanador(Stage stagePrincipal) {
-        ArrayList<Jugador> ganador = juego.getGanadores();
+        Pila<Jugador> ganador = juego.getGanadores();
         String mensaje;
         if(ganador.isEmpty()){
             mensaje="No hay ganador";
@@ -228,6 +227,46 @@ public class JuegoGUI extends Application{
                 mensaje+= ganador.get(i).getNombre()+", ";
             }
             mensaje+=" con "+ ganador.get(0).getPuntaje()+ " puntos";
+        }
+
+        Alert alerta= new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("FIN DEL JUEGO");
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+        stagePrincipal.close();
+    }
+ */
+
+    public void mostrarGanador(Stage stagePrincipal) {
+        Pila<Jugador> ganador = juego.getGanadores();
+        String mensaje;
+        if (ganador.pilaVacia()) {
+            mensaje = "No hay ganador";
+        } else {
+            Pila<Jugador> aux = new Pila<>();
+            int contador = 0;
+            int puntajeGanador = 0;
+            String nombres = "";
+
+            // Desapilamos temporalmente para contar y extraer la información
+            while (!ganador.pilaVacia()) {
+                Jugador g = ganador.pop();
+                puntajeGanador = g.getPuntaje();
+                nombres += g.getNombre() + ", ";
+                contador++;
+                aux.push(g);
+            }
+
+            while (!aux.pilaVacia()) {
+                ganador.push(aux.pop());
+            }
+
+            if (contador == 1) {
+                mensaje ="Jugador " + nombres + " ha ganado con " + puntajeGanador + " puntos";
+            } else {
+                mensaje = "Han ganado " + nombres + " con " + puntajeGanador + " puntos";
+            }
         }
 
         Alert alerta= new Alert(Alert.AlertType.INFORMATION);

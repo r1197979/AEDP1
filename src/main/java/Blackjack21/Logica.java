@@ -37,6 +37,7 @@ public class Logica {
         else return false;
     }
 
+    /*
     public ArrayList<Jugador> buscarGanador(ArrayList<Jugador> jugadores){
         ArrayList<Jugador> ganadores= new ArrayList<>();
         int puntajeGanador=0;
@@ -56,6 +57,29 @@ public class Logica {
         }
         return ganadores;
     }
+     */
+
+
+    public Pila<Jugador> buscarGanador(ArrayList<Jugador> jugadores){
+        Pila<Jugador> ganadores = new Pila<>();
+        int puntajeGanador = 0;
+
+        for(int i = 0; i < jugadores.size(); i++){
+            Jugador j = jugadores.get(i);
+            if(!j.getSuperaLimite()){
+                if(j.getPuntaje() > puntajeGanador){
+                    while(!ganadores.pilaVacia()){ ganadores.pop(); } // vaciar manualmente
+                    ganadores.push(j);
+                    puntajeGanador = j.getPuntaje();
+                }else if(j.getPuntaje() == puntajeGanador){
+                    ganadores.push(j);
+                }
+            }
+        }
+        return ganadores;
+    }
+
+
 
     public void jugarTurnoDealer(Jugador dealer, Mazo mazo){
         while(dealer.getPuntaje() <=16){
