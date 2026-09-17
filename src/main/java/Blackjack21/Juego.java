@@ -12,7 +12,7 @@ public class Juego {
     private Mazo mazo;
     private int turnoActual;
     private int numeroJugadores;
-    private ArrayList<Jugador> ganadores;
+    private Pila<Jugador> ganadores;
     private Jugador dealer;
 
     public Juego(ArrayList<String> nombres){
@@ -21,7 +21,7 @@ public class Juego {
         numeroJugadores= nombres.size();
         jugadores= new ArrayList<Jugador>();
         dealer= new Jugador("Dealer");
-        ganadores= new ArrayList<>();
+        ganadores= new Pila<>();
 
         iniciarJuego(nombres);
     }
@@ -53,13 +53,22 @@ public class Juego {
             ganadores= logica.buscarGanador(jugadores);
 
             if(!dealer.getSuperaLimite()){
-                if(ganadores.isEmpty()){
-                    ganadores.add(dealer); //si todos pierden gana dealer
-                }else if(dealer.getPuntaje() == ganadores.get(0).getPuntaje()){
-                    ganadores.add(dealer);
-                }else if(dealer.getPuntaje() > ganadores.get(0).getPuntaje()){
-                    ganadores.clear();
-                    ganadores.add(dealer);
+                if(ganadores.pilaVacia()){
+                    ganadores.push(dealer);
+                } else {
+                    Jugador tope = ganadores.pop();   //sacar jugador
+                    if(dealer.getPuntaje() == tope.getPuntaje()){
+                        ganadores.push(tope);         // se queda como ganador
+                        ganadores.push(dealer);
+                    }else if(dealer.getPuntaje() > tope.getPuntaje()){
+                        //el dealer reemplaza a todos
+                        while(!ganadores.pilaVacia()){
+                            ganadores.pop();
+                        }
+                        ganadores.push(dealer);
+                    }else{
+                        ganadores.push(tope); // el dealer no gana, regreso al que ya estaba
+                    }
                 }
             }
             return true; //ronda finalizada, se encontró ganador
@@ -77,8 +86,47 @@ public class Juego {
     public Mazo getMazo(){ return mazo;}
     public Logica getLogica(){return logica;}
     public Jugador getDealer(){return dealer;}
-    public ArrayList<Jugador> getGanadores(){return ganadores;}
+    public Pila<Jugador> getGanadores(){return ganadores;}
 
+    @Override
+    public String toString(){
+        String cartasDealer = "";
+        for(Carta c: dealer.getMano()){ c.makeFaceUp(); }
+        String stringDealer = "-> " + dealer.getNombre() + " / Cartas: " + dealer.getMano() + " / " + dealer.getPuntaje() + " puntos";
+
+        String stringJugadores = "";
+        for(int i = 0; i < jugadores.size(); i++){
+            Jugador j = jugadores.get(i);
+            for(Carta c: j.getMano()){ c.makeFaceUp(); }
+
+            String turno = "";
+            if(i == turnoActual){
+                turno = "*TURNO DEL JUGADOR";
+            }
+            stringJugadores += "-> " + j.getNombre() + " / Cartas: " + j.getMano() + " / " + j.getPuntaje() + " puntos " + turno + "\n";
+        }
+
+        String textoGanadores = "";
+        if(!ganadores.pilaVacia()){
+            Pila<Jugador> aux = new Pila<>();
+            int puntajeGanador = 0;
+            while(!ganadores.pilaVacia()){
+                Jugador g = ganadores.pop();
+                puntajeGanador = g.getPuntaje();
+                textoGanadores += g.getNombre() + ", ";
+                aux.push(g);
+            }
+            while(!aux.pilaVacia()){
+                ganadores.push(aux.pop());
+            }
+            textoGanadores = "GANÓ: " + textoGanadores.substring(0, textoGanadores.length() - 2) + " con " + puntajeGanador + " puntos";
+        }
+        return stringDealer + "\n" + stringJugadores + "\n" + textoGanadores;
+    }
+
+
+
+    /*
     public String toString(){
         String cartasDealer= "";
         for(Carta c: dealer.getMano()){c.makeFaceUp();}
@@ -109,6 +157,7 @@ public class Juego {
         }
         return stringDealer+ "\n" +stringJugadores+ "\n"+ textoGanadores;
     }
+     */
 
 
 
