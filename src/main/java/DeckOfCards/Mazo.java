@@ -30,7 +30,7 @@ public class Mazo {
         }
         return null;
     }
-    private void mezclar() {
+    public void mezclar() {
         Collections.shuffle(cartas);
     }
 

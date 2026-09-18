@@ -7,8 +7,15 @@ import DeckOfCards.Mazo;
 import java.util.ArrayList;
 
 public class Logica {
+    public Pila<Undo> getMovimientos() {
+        return movimientos;
+    }
 
-    public Logica(){}
+    private Pila<Undo> movimientos;
+
+    public Logica(){
+        movimientos= new Pila<>();
+    }
     boolean esPrimera= false;
 
     //2 cartas por jugador
@@ -25,12 +32,49 @@ public class Logica {
         if(!j.getSuperaLimite() && !j.getPlantado()){
             CartaInglesa carta= m.obtenerUnaCarta();
             j.agregarCarta(carta);
+            Undo u= new Undo(j, carta, true);
+            movimientos.push(u);
         }
     }
 
     public void plantarse(Jugador j){
         j.plantarse();
+        Undo u= new Undo(j, null, false);
+        movimientos.push(u);
     }
+
+    public Jugador deshacerMovimiento(Mazo m){
+        if(!movimientos.pilaVacia()){
+            Undo tope = movimientos.pop(); // ultima accion
+            Jugador j = tope.getJugador(); // quien juega
+            // validar que no sean las dos primeras cartas del jugador
+            if(tope.getAccion() && j.getMano().size()<=2){
+                movimientos.push(tope);
+                return null;
+            }
+
+            /*
+            true = tomarCarta; false = plantado
+            */
+            if(tope.getAccion()){
+                CartaInglesa ci = tope.getCarta();
+                // quitar carta y recalcular puntaje
+                j.getMano().remove(ci);
+                j.sumarMano();
+                if (j.getPuntaje() <= 21) {
+                    j.setSuperaLimite(false);
+                }
+
+                m.getCartas().add(ci);
+                m.mezclar();
+            } else { // jugador eligió plantarse en ese movimiento
+                j.deshacerPlantado();
+            }
+            return j;
+        }
+        return null;
+    }
+
 
     public boolean haPerdido(Jugador j){
         if(j.getSuperaLimite()) return true;

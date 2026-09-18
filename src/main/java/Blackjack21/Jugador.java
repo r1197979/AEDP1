@@ -60,6 +60,12 @@ public class Jugador {
         carta.makeFaceUp();
     }
 
+    public void setSuperaLimite(boolean superaLimite) {
+        this.superaLimite = superaLimite;
+    }
+
+    public void deshacerPlantado(){plantado=false;}
+
     public ArrayList<CartaInglesa> getMano(){return mano;}
     public int getPuntaje(){ return puntaje;}
     public boolean getPlantado(){ return plantado;}

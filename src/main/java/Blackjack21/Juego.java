@@ -159,6 +159,8 @@ public class Juego {
     }
      */
 
-
+    public void setTurnoActual(int i){
+        turnoActual=i;
+    }
 
 }

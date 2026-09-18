@@ -174,12 +174,16 @@ public class JuegoGUI extends Application{
 
         Button botonPlantarse= new Button("Plantarse");
         Button botonTomar= new Button("Tomar carta");
+        Button botonDeshacer= new Button("Undo");
         botonTomar.setPrefWidth(120);
         botonTomar.setPrefHeight(60);
         botonPlantarse.setPrefWidth(120);
         botonPlantarse.setPrefHeight(60);
+        botonDeshacer.setPrefWidth(120);
+        botonDeshacer.setPrefHeight(60);
         botonTomar.setStyle("-fx-font-size: 15px; -fx-padding: 6px 10px; -fx-background-color: darkgreen; -fx-text-fill: white;");
         botonPlantarse.setStyle("-fx-font-size: 15px; -fx-padding: 6px 10px; -fx-background-color: darkgreen; -fx-text-fill: white;");
+        botonDeshacer.setStyle("-fx-font-size: 15px; -fx-padding: 6px 10px; -fx-background-color: darkgreen; -fx-text-fill: white;");
 
         botonPlantarse.setOnAction(e ->{
             if(juego.getJugadorActual()==null){return;}//no hay nadie en turno
@@ -203,9 +207,22 @@ public class JuegoGUI extends Application{
             if(rondaTerminada){mostrarGanador(stagePrincipal);}
         });
 
+        botonDeshacer.setOnAction(e->{
+            Jugador jDeshacer= juego.getLogica().deshacerMovimiento(juego.getMazo());
+            if(jDeshacer!=null){
+                //buscar j para cambiar turno
+                for(int i=0; i<juego.getJugadores().size(); i++){
+                    if(juego.getJugadores().get(i) == jDeshacer){
+                        juego.setTurnoActual(i);
+                    }
+                }
+                dibujarPantalla(stagePrincipal);
+            }
+        });
+
         HBox cajaBotones= new HBox(20);
         cajaBotones.setAlignment(Pos.CENTER);
-        cajaBotones.getChildren().addAll(botonPlantarse, botonTomar);
+        cajaBotones.getChildren().addAll(botonPlantarse, botonTomar, botonDeshacer);
         border.setCenter(cajaBotones);
 
         Scene escenaJuego = new Scene(border, 1450, 900);
