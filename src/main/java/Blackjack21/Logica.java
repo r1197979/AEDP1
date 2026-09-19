@@ -29,7 +29,7 @@ public class Logica {
 
     //
     public void tomarCarta(Jugador j, Mazo m){
-        if(!j.getSuperaLimite() && !j.getPlantado()){
+        if(!(j.getSuperaLimite() && j.getPlantado())){
             CartaInglesa carta= m.obtenerUnaCarta();
             j.agregarCarta(carta);
             Undo u= new Undo(j, carta, true);
@@ -47,6 +47,7 @@ public class Logica {
         if(!movimientos.pilaVacia()){
             Undo tope = movimientos.pop(); // ultima accion
             Jugador j = tope.getJugador(); // quien juega
+            System.out.println(j.getNombre());
             // validar que no sean las dos primeras cartas del jugador
             if(tope.getAccion() && j.getMano().size()<=2){
                 movimientos.push(tope);

@@ -1,12 +1,14 @@
 package Blackjack21;
 
+import java.util.Arrays;
+
 public class Pila<T> {
 
     private T[] pila;
     private int tope;
 
     public Pila() {
-        pila = (T[]) new Object[10];
+        pila = (T[]) new Object[100];
         tope = -1;
     }
 
@@ -17,7 +19,7 @@ public class Pila<T> {
 
     public void push(T dato) {
         if (pilaLlena()) {
-            System.out.println("Desbordamiento");
+            pila = Arrays.copyOf(pila, pila.length*2);
         } else {
             tope++;
             pila[tope] = dato;
